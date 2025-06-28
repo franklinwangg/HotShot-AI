@@ -1,3 +1,5 @@
+/venv
+
 # Vercel deployment files
 .vercel/
 

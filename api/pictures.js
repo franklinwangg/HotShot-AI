@@ -63,7 +63,7 @@ async function handler(req, res) {
       console.log("files : ", files);
       const file = files.image[0];
       if (!file || !file.filepath) {
-        return res.status(400).json({ error: "No file uploaded" });
+        return res.status(400).json({ error: "pictures : No file uploaded" });
       }
       console.log("3");
 
@@ -72,14 +72,6 @@ async function handler(req, res) {
 
       console.log("4");
 
-
-      // const uploadParams = {
-      //   Bucket: BUCKET_NAME,
-      //   Key: key,
-      //   Body: stream,
-      //   ContentType: file.mimetype,
-      //   ACL: "public-read",
-      // };
       const uploadParams = {
         Bucket: BUCKET_NAME,
         Key: key,
@@ -91,16 +83,24 @@ async function handler(req, res) {
 
       try {
         await s3.send(new PutObjectCommand(uploadParams));
-        const imageUrl = `https://${BUCKET_NAME}.s3.us-west-1.amazonaws.com/${key}`;
+        // const imageUrl = `https://${BUCKET_NAME}.s3.us-west-1.amazonaws.com/${key}`;
+
+        // return res.status(201).json({
+        //   message: "Image uploaded successfully",
+        //   imageUrl,
+        // });
 
         return res.status(201).json({
-          message: "Image uploaded successfully",
-          imageUrl,
+          message: "Image uploaded successfully"
         });
       } catch (error) {
         console.error("Upload error:", error.message);
         return res.status(500).json({ error: "Failed to upload image" });
       }
+
+
+      
+
     }
     );
   } else {

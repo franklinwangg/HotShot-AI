@@ -26,9 +26,7 @@ function App() {
           {/* <Route path="/" element={<Login />} /> */}
 
           <Route path="/register" element={<Register />} />
-          {/* <Route path="/homepage" element={<Homepage />} /> */}
           <Route path="/login" element={<Login />} />
-
           <Route path="/addImages" element={<AddImages />} />
 
           {/* Routes with HeaderBar */}

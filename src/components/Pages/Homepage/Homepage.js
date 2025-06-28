@@ -14,7 +14,6 @@ function Homepage() {
 
     const { username, setUsername } = useContext(UserContext); // Access username and setUsername from context
     const [showLogoutButton, setShowLogoutButton] = useState(false);
-    // let picture1, picture2, picture3, picture4, picture5, picture6;
 
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
@@ -29,6 +28,22 @@ function Homepage() {
                 setpictures(data);
             })
     }, []);
+
+    useEffect(() => {
+        if (!pictures || pictures.length === 0) {
+            return;
+        }
+
+        for (let i = 0; i < pictures.length; i++) {
+            fetch(`${apiEndpointUrl}/api/analyze`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ imageUrl: pictures[i] }),
+            })
+                .then(res => res.json())
+                .then(data => console.log("picture ", i, " : ", data));
+        }
+    }, [pictures]);
 
     const openLogoutButton = () => {
         setShowLogoutButton(true);

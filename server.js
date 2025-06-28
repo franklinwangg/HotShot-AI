@@ -5,6 +5,7 @@ const cors = require("cors");
 // API routes
 const picturesRoutes = require('./api/pictures.js');
 const usersRoutes = require('./api/users.js');
+const analyzeRoutes = require('./api/analyze.js');
 
 const app = express();
 
@@ -16,11 +17,9 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-const imageUpload = multer({ storage: multer.memoryStorage() });
-// app.use('/api/createpictureImage', imageUpload.single('image'), createpictureImageRoutes);
-
 app.use('/api/pictures', express.json(), picturesRoutes);
 app.use('/api/users', express.json(), usersRoutes);
+app.use('/api/analyze', express.json(), analyzeRoutes);
 
 // Server setup
 const port = 3001;
