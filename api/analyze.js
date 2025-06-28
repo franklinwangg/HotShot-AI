@@ -43,10 +43,14 @@ async function handler(req, res) {
     // 2.2) script path
     const sharpnessScriptPath = path.join(__dirname, 'scripts', 'sharpness', 'sharpness_score.py');
     const lightingScriptPath = path.join(__dirname, 'scripts', 'lighting', 'lighting_score.py');
+    const predictImageScriptPath = path.join(__dirname, 'scripts', 'predict-image', 'predict_image.py');
 
     const projectRoot = path.resolve(__dirname, '..');  // adjust '..' if your script is inside a subfolder
     const venvPath = path.join(projectRoot, 'venv');
     const pythonPath = path.join(venvPath, 'Scripts', 'python.exe');
+
+    // 2.3) sharpess, lighting, and predict image scores
+    let sharpnessScore, lightingScore, predictedImageScore;
 
     // 3) send the image to sharpness
     execFile(pythonPath, [sharpnessScriptPath, imageUrl], (error, stdout, stderr) => {
@@ -54,9 +58,7 @@ async function handler(req, res) {
         console.log("sharpness error : ", error);
         return;
       }
-      console.log("sharpness stdout raw:", JSON.stringify(stdout));
-      const score = parseFloat(stdout);
-      console.log("sharpness parsed score:", score);
+      sharpnessScore = parseFloat(stdout);
     });
 
     // 4) send the image to lighting
@@ -65,10 +67,69 @@ async function handler(req, res) {
         console.log("lighting script error : ", error);
         return;
       }
-      console.log("lighting script stdout raw:", JSON.stringify(stdout));
-      const score = parseFloat(stdout);
-      console.log("lighting script parsed score:", score);
+      lightingScore = parseFloat(stdout);
     });
+
+    // 5) send the image to predict-image
+//     execFile(pythonPath, [predictImageScriptPath, imageUrl], (error, stdout, stderr) => {
+//       if (error) {
+//         console.log("predict image error : ", error);
+//         return;
+//       }
+//       predictedImageScore = JSON.stringify(stdout);
+//     });
+//     // 1) parse them out
+//     // 2) if highest score is 
+// // > 80%	High confidence — prediction is very likely correct; safe to treat as definitive.
+// // 50% – 80%	Medium confidence — probably correct but consider showing alternatives or qualifiers like “likely” or “probably.”
+// // < 50%	Low confidence — prediction is uncertain; best to show top-N results or disclaim uncertainty.
+
+    execFile(pythonPath, [predictImageScriptPath, imageUrl], (error, stdout, stderr) => {
+      if (error) {
+        console.error("predict image error : ", error);
+        return;
+      }
+
+      // Raw output example:
+      // "runway: 31.11%\r\nheliport: 12.96%\r\nconstruction_site: 11.87%\r\ndam: 11.21%\r\nindustrial_area: 9.46%\r\n"
+      
+      // 1) Parse the stdout string into an array of {label, score}
+      const lines = stdout.trim().split(/\r?\n/);
+      const predictions = lines.map(line => {
+        const [label, scoreStr] = line.split(':').map(s => s.trim());
+        const score = parseFloat(scoreStr.replace('%', ''));
+        return { label, score };
+      });
+
+      // 2) Find highest score
+      const topPrediction = predictions.reduce((max, cur) => (cur.score > max.score ? cur : max), predictions[0]);
+
+      // 3) Categorize confidence
+      const score = topPrediction.score;
+      let confidenceCategory;
+      if (score > 80) {
+        confidenceCategory = 'High confidence';
+      } else if (score >= 50) {
+        confidenceCategory = 'Medium confidence';
+      } else {
+        confidenceCategory = 'Low confidence';
+      }
+
+      // 4) Output decision info
+      console.log(`Top prediction: ${topPrediction.label} (${topPrediction.score}%)`);
+      console.log(`Confidence: ${confidenceCategory}`);
+
+      // Optionally handle low confidence, e.g., show top 3 predictions
+      if (confidenceCategory === 'Low confidence') {
+        console.log('Top 3 predictions (due to low confidence):');
+        predictions.slice(0, 3).forEach(p => {
+          console.log(`  - ${p.label}: ${p.score}%`);
+        });
+      }
+
+      // You can now send { lightingScore, sharpnessScore, predictedTopic } to ChatGPT or other downstream logic
+    });
+
 
   }
 };
