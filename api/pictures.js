@@ -69,10 +69,13 @@ async function handler(req, res) {
 
       const stream = fs.createReadStream(file.filepath);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       const key = `${Date.now()}-${file.originalFilename}`;
 
       console.log("4");
 =======
+=======
+>>>>>>> Stashed changes
       
       // Sanitize filename to remove spaces and special characters
       const sanitizedFilename = file.originalFilename
@@ -81,6 +84,9 @@ async function handler(req, res) {
         .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
       
       const key = `${username}/${Date.now()}-${sanitizedFilename}`;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
       const uploadParams = {

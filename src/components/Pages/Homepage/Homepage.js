@@ -17,8 +17,11 @@ function Homepage() {
 
     useEffect(() => {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         fetch(`${apiEndpointUrl}/api/pictures`)
 =======
+=======
+>>>>>>> Stashed changes
         const userId = username;
 
         fetch(`${apiEndpointUrl}/api/pictures?userId=${userId}`)

@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 =======
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 import "./AddImages.css";
 
@@ -20,6 +23,10 @@ function AddImages() {
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+    const { username, setUsername } = useContext(UserContext); 
+>>>>>>> Stashed changes
 =======
     const { username, setUsername } = useContext(UserContext); 
 >>>>>>> Stashed changes
