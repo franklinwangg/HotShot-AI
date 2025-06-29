@@ -35,7 +35,12 @@ async function handler(req, res) {
 
   if (req.method === "GET") {
     try {
-      const command = new ListObjectsV2Command({ Bucket: BUCKET_NAME });
+      const {userId} = req.query;
+
+      const command = new ListObjectsV2Command({
+        Bucket: BUCKET_NAME,
+        Prefix: `${userId}/`, // only fetch files with that userId prefix
+      });
       const data = await s3.send(command);
 
       const imageUrls = (data.Contents || []).map((item) => (
@@ -53,47 +58,24 @@ async function handler(req, res) {
     const form = new IncomingForm({ multiples: false }); // fix: set this explicitly
 
     form.parse(req, async (err, fields, files) => {
-      console.log("1");
       if (err) {
         console.error("Form parse error:", err);
         return res.status(400).json({ error: "Error parsing form" });
       }
-      console.log("2");
 
       console.log("files : ", files);
+      console.log("fields : ", fields);
       const file = files.image[0];
+
+
+      const username = fields.username;
+
       if (!file || !file.filepath) {
         return res.status(400).json({ error: "pictures : No file uploaded" });
       }
-      console.log("3");
 
       const stream = fs.createReadStream(file.filepath);
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-      const key = `${Date.now()}-${file.originalFilename}`;
-
-      console.log("4");
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-      
-      // Sanitize filename to remove spaces and special characters
-      const sanitizedFilename = file.originalFilename
-        .replace(/[^a-zA-Z0-9.-]/g, '_') // Replace special chars with underscore
-        .replace(/_+/g, '_') // Replace multiple underscores with single
-        .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
-      
-      const key = `${username}/${Date.now()}-${sanitizedFilename}`;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+      const key = `${username}/${Date.now()}-${file.originalFilename}`;
 
       const uploadParams = {
         Bucket: BUCKET_NAME,
@@ -102,16 +84,8 @@ async function handler(req, res) {
         ContentType: file.mimetype,
       };
 
-            console.log("5");
-
       try {
         await s3.send(new PutObjectCommand(uploadParams));
-        // const imageUrl = `https://${BUCKET_NAME}.s3.us-west-1.amazonaws.com/${key}`;
-
-        // return res.status(201).json({
-        //   message: "Image uploaded successfully",
-        //   imageUrl,
-        // });
 
         return res.status(201).json({
           message: "Image uploaded successfully"
@@ -120,10 +94,6 @@ async function handler(req, res) {
         console.error("Upload error:", error.message);
         return res.status(500).json({ error: "Failed to upload image" });
       }
-
-
-      
-
     }
     );
   } else {
