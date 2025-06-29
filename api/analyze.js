@@ -55,17 +55,16 @@ async function handler(req, res) {
     let sharpnessScore, lightingScore, predictedImage, imageConfidenceCategory;
 
     try {
-      // Properly encode the URL to handle spaces and special characters
-      const encodedImageUrl = encodeURI(imageUrl);
-      
+      // The imageUrl should now be clean since we sanitize filenames during upload
       const [sharpnessOut, lightingOut, predictOut] = await Promise.all([
         execPythonScript(pythonPath, sharpnessScriptPath, encodedImageUrl),
         execPythonScript(pythonPath, lightingScriptPath, encodedImageUrl),
         execPythonScript(pythonPath, predictImageScriptPath, encodedImageUrl)
       ]);
 
-      sharpnessScore = parseFloat(sharpnessOut);
-      lightingScore = parseFloat(lightingOut);
+      // Parse scores and ensure they're between 0-100
+      sharpnessScore = Math.min(100, Math.max(0, parseFloat(sharpnessOut)));
+      lightingScore = Math.min(100, Math.max(0, parseFloat(lightingOut)));
 
       // parse prediction output as before
       const lines = predictOut.trim().split(/\r?\n/);
@@ -91,7 +90,7 @@ async function handler(req, res) {
     }
 
     // Calculate overall score (50% sharpness + 50% lighting)
-    const overallScore = (sharpnessScore + lightingScore) / 2;
+    const overallScore = Math.round((sharpnessScore + lightingScore) / 2);
     
     // Generate concise feedback based on scores
     let feedback = "";
@@ -110,12 +109,12 @@ async function handler(req, res) {
       }
     }
 
-    // Return the analysis results
+    // Return the analysis results with all scores as percentages (0-100)
     res.status(200).json({
-      score: Math.round(overallScore), // Already out of 100
+      score: overallScore, // Already a percentage (0-100)
       feedback: feedback,
-      sharpnessScore: Math.round(sharpnessScore),
-      lightingScore: Math.round(lightingScore),
+      sharpnessScore: Math.round(sharpnessScore), // Ensure it's a percentage
+      lightingScore: Math.round(lightingScore), // Ensure it's a percentage
       predictedImage: predictedImage,
       confidence: imageConfidenceCategory
     });

@@ -8,7 +8,7 @@ import HeaderBar from '../../Others/HeaderBar/HeaderBar';
 function Homepage() {
     const navigate = useNavigate();
     const [pictures, setpictures] = useState([]);
-    const [ranking, setRanking] = useState([]); // [{url, score, feedback}]
+    const [ranking, setRanking] = useState([]); //
     const [loading, setLoading] = useState(false);
     const [ranked, setRanked] = useState(false);
     const { username, setUsername } = useContext(UserContext);
@@ -16,7 +16,7 @@ function Homepage() {
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
-        const userId = username; // however you get your user ID
+        const userId = username;
 
         fetch(`${apiEndpointUrl}/api/pictures?userId=${userId}`)
             .then((response) => response.json())
@@ -29,7 +29,6 @@ function Homepage() {
         setLoading(true);
         setRanked(false);
         try {
-            // Run analysis for all photos in parallel
             const results = await Promise.all(
                 pictures.map(async (picture) => {
                     const res = await fetch(`${apiEndpointUrl}/api/analyze`, {
@@ -49,7 +48,7 @@ function Homepage() {
                     };
                 })
             );
-            // Sort by score descending
+            // scoree sorting
             results.sort((a, b) => b.score - a.score);
             setRanking(results);
             setRanked(true);
@@ -75,7 +74,6 @@ function Homepage() {
                 </div>
             </div>
 
-        {/* if user is logged in */}
             {username != null && (
                 <div id="rest-of-pictures">
                     <div style={{ display: 'flex', justifyContent: 'center', margin: '1rem 0' }}>

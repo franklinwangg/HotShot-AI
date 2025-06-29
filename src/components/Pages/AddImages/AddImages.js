@@ -13,17 +13,15 @@ function AddImages() {
     const [uploadComplete, setUploadComplete] = useState(false);
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
-    const { username, setUsername } = useContext(UserContext); // Access username and setUsername from context
+    const { username, setUsername } = useContext(UserContext); 
 
     useEffect(() => {
-        // This will run every time `images` is updated
         if (images.length > 0) {
             console.log("final images : ", images);
         }
     }, [images]);
 
     useEffect(() => {
-        // Auto-navigate back to homepage after 3 seconds when upload is complete
         if (uploadComplete) {
             const timer = setTimeout(() => {
                 navigate('/');
@@ -52,7 +50,6 @@ function AddImages() {
         setUploadProgress({});
 
         try {
-            // Upload each image individually
             const uploadPromises = images.map(async (image, index) => {
                 const formData = new FormData();
                 formData.append("image", image);
@@ -77,7 +74,6 @@ function AddImages() {
             await Promise.all(uploadPromises);
             console.log("All images uploaded successfully");
             
-            // Set upload complete and show success message
             setUploadComplete(true);
             
         } catch (error) {
@@ -101,11 +97,11 @@ function AddImages() {
 
     function adjustHeight(event) {
         const textarea = event.target;
-        textarea.style.height = 'auto'; // Reset height
-        textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scrollHeight
+        textarea.style.height = 'auto'; 
+        textarea.style.height = `${textarea.scrollHeight}px`; // 
     }
 
-    // If upload is complete, show success message and button to go back
+
     if (uploadComplete) {
         return (
             <div className="container">
@@ -149,7 +145,7 @@ function AddImages() {
                 </label>
             </div>
 
-            {/* Display selected images */}
+
             {images.length > 0 && (
                 <div className="selected-images">
                     <h3>Selected Images ({images.length})</h3>
