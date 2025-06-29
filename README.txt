@@ -1,13 +1,10 @@
-1:47pm pipeline a response from chatgpt
+7:55 make only a user's specific photos show up for them, 3
 
 .\venv\Scripts\activate
 pip freeze > requirements.txt
 
 
-1. Sharpness / Focus
-2. Exposure / Lighting
-3. Composition
+3) allow multiple photo uploads in one go on the uploadPhoto thing
 
-1) use computer vision to figure out what the image is of
-2) pipeline smth like {lighting score, sharpness score, image topic} to chatgpt and make it return a response
-3) 
+2) make user album collections
+4) for each album collection, create a photo ranker

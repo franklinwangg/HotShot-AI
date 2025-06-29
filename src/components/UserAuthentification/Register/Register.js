@@ -35,8 +35,8 @@ function Register() {
 
     return (
         <div id="register-container">
-            <h1 className="boxhub-title">🥊 BoxHub</h1>
-            <h2 className="auth-subtitle">Join the Fight Community</h2>
+            <h1 className="boxhub-title">HotShot-AI</h1>
+            <h2 className="auth-subtitle">We rate your vacation vibe. Literally.</h2>
             
             <form className="auth-form">
                 <div className="form-group">
@@ -66,7 +66,7 @@ function Register() {
                     className="auth-button"
                     onClick={handleButtonClick}
                 >
-                    Sign Up & Fight
+                    Register!
                 </button>
             </form>
 

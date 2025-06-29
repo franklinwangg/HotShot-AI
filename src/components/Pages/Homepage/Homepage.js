@@ -5,8 +5,6 @@ import "./Homepage.css";
 import UserContext from '../../../context/UserContext';
 import HeaderBar from '../../Others/HeaderBar/HeaderBar';
 
-
-
 function Homepage() {
 
     const navigate = useNavigate();
@@ -17,16 +15,15 @@ function Homepage() {
 
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
-
     useEffect(() => {
-        fetch(`${apiEndpointUrl}/api/pictures`)
-            .then((response) => {
-                return response.json();
-            })
+        const userId = username; // however you get your user ID
+
+        fetch(`${apiEndpointUrl}/api/pictures?userId=${userId}`)
+            .then((response) => response.json())
             .then((data) => {
                 console.log("data : ", data);
                 setpictures(data);
-            })
+            });
     }, []);
 
     useEffect(() => {
@@ -75,7 +72,6 @@ function Homepage() {
                         </div>
                     )
                 }
-
             </div>
         </div>
     );
