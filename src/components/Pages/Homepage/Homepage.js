@@ -71,56 +71,96 @@ function Homepage() {
                     Powered by <strong>ChatGPT</strong>
                 </div>
             </div>
-            
-            <div id="rest-of-pictures">
-                <div style={{ display: 'flex', justifyContent: 'center', margin: '1rem 0' }}>
-                    <button
-                        className="btn-primary"
-                        style={{ 
-                            maxWidth: 150, 
-                            fontWeight: 500, 
-                            fontSize: '0.9rem',
-                            backgroundColor: '#b330ff',
-                            borderColor: '#b330ff',
-                            padding: '0.6rem 1.2rem'
-                        }}
-                        onClick={handlePhotoRanker}
-                        disabled={loading || pictures.length === 0}
-                    >
-                        {loading ? 'Ranking Photos...' : 'Photo Ranker'}
-                    </button>
-                </div>
-                {loading && (
-                    <div style={{ textAlign: 'center', margin: '1rem' }}>
-                        <div className="spinner" style={{ margin: '0 auto' }}></div>
-                        <div style={{ marginTop: 8 }}>Analyzing your photos...</div>
+
+        {/* if user is logged in */}
+            {username != null && (
+                <div id="rest-of-pictures">
+                    <div style={{ display: 'flex', justifyContent: 'center', margin: '1rem 0' }}>
+                        <button
+                            className="btn-primary"
+                            style={{
+                                maxWidth: 150,
+                                fontWeight: 500,
+                                fontSize: '0.9rem',
+                                backgroundColor: '#b330ff',
+                                borderColor: '#b330ff',
+                                padding: '0.6rem 1.2rem',
+                            }}
+                            onClick={handlePhotoRanker}
+                            disabled={loading || pictures.length === 0}
+                        >
+                            {loading ? 'Ranking Photos...' : 'Photo Ranker'}
+                        </button>
                     </div>
-                )}
-                <div id="rest-of-pictures-dividing-line"></div>
-                <div id="rest-of-pictures-pictures">
-                    {ranked && ranking.length > 0 ? (
-                        ranking.map((item, index) => (
-                            <div id="remaining-picture-picture" key={index} style={{ marginBottom: '2rem' }}>
-                                <img id="remaining-picture-image" src={item.url} alt={item.url} style={{ maxWidth: 400, width: '100%', borderRadius: 12, boxShadow: '0 2px 12px rgba(0,0,0,0.07)' }} />
-                                <div style={{ marginTop: 12, background: '#f3f0fa', borderRadius: 8, padding: 16, color: '#333', boxShadow: '0 1px 4px rgba(179,48,255,0.07)' }}>
-                                    <div style={{ fontWeight: 700, color: '#b330ff', marginBottom: 4 }}>Rank #{index + 1} &nbsp;|&nbsp; Score: {item.score}</div>
-                                    <div style={{ fontSize: '1rem', whiteSpace: 'pre-line' }}>{item.feedback}</div>
+
+                    {loading && (
+                        <div style={{ textAlign: 'center', margin: '1rem' }}>
+                            <div className="spinner" style={{ margin: '0 auto' }}></div>
+                            <div style={{ marginTop: 8 }}>Analyzing your photos...</div>
+                        </div>
+                    )}
+
+                    <div id="rest-of-pictures-dividing-line"></div>
+                    <div id="rest-of-pictures-pictures">
+                        {ranked && ranking.length > 0 ? (
+                            ranking.map((item, index) => (
+                                <div
+                                    id="remaining-picture-picture"
+                                    key={index}
+                                    style={{ marginBottom: '2rem' }}
+                                >
+                                    <img
+                                        id="remaining-picture-image"
+                                        src={item.url}
+                                        alt={item.url}
+                                        style={{
+                                            maxWidth: 400,
+                                            width: '100%',
+                                            borderRadius: 12,
+                                            boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
+                                        }}
+                                    />
+                                    <div
+                                        style={{
+                                            marginTop: 12,
+                                            background: '#f3f0fa',
+                                            borderRadius: 8,
+                                            padding: 16,
+                                            color: '#333',
+                                            boxShadow: '0 1px 4px rgba(179,48,255,0.07)',
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                fontWeight: 700,
+                                                color: '#b330ff',
+                                                marginBottom: 4,
+                                            }}
+                                        >
+                                            Rank #{index + 1} &nbsp;|&nbsp; Score: {item.score}
+                                        </div>
+                                        <div style={{ fontSize: '1rem', whiteSpace: 'pre-line' }}>
+                                            {item.feedback}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
-                    ) : (
-                        pictures && pictures.length > 0 ? (
+                            ))
+                        ) : pictures && pictures.length > 0 ? (
                             pictures.map((picture, index) => (
                                 <div id="remaining-picture-picture" key={index}>
-                                    <img id="remaining-picture-image" src={picture} alt={picture.title} />
+                                    <img
+                                        id="remaining-picture-image"
+                                        src={picture}
+                                        alt={picture.title || `Image ${index}`}
+                                    />
                                 </div>
                             ))
                         ) : (
                             <div>Loading...</div>
-                        )
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

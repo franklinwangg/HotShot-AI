@@ -41,13 +41,18 @@ const HeaderBar = () => {
           </div>
 
           <div className="header-bar-right">
-            <div className="add-photos-section">
-              <button id="add-post-button" onClick={handleAddPostClick}>
-                <span className="plus-sign">+</span>
-              </button>
-              <span className="add-photos-text">Add Photos</span>
-            </div>
-            
+
+            {username != null && (
+              <div className="add-photos-section">
+                <button id="add-post-button" onClick={handleAddPostClick}>
+                  <span className="plus-sign">+</span>
+                </button>
+                <span className="add-photos-text">Create New Album</span>
+              </div>
+            )}
+
+
+
             {username && <div className="header-bar-username">{username}</div>}
             <button id="user-icon-button" onClick={handleUserButtonClick}>
               <img id="person-icon" src={personIcon} alt="User" className="white-profile-icon" />
@@ -60,10 +65,10 @@ const HeaderBar = () => {
           </div>
         </div>
       </div>
-      <div style={{ 
-        textAlign: 'center', 
-        margin: '1rem auto', 
-        maxWidth: '600px', 
+      <div style={{
+        textAlign: 'center',
+        margin: '1rem auto',
+        maxWidth: '600px',
         padding: '0 2rem',
         fontSize: '1.1rem',
         fontWeight: 500,
