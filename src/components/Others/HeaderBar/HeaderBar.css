@@ -1,31 +1,60 @@
 .header-bar {
-    background-color: #FF1616;
-    color: white;
+    background-color: white;
+    color: #495057;
     padding: 1rem 2rem;
-    
+    margin: 4rem 2rem 0.5rem 2rem;
+    border-radius: 15px;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+    min-height: 60px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .header-bar-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1200px;
+    max-width: 600px;
     margin: 0 auto;
+    height: 100%;
+  }
+  
+  .header-bar-logo {
+    display: flex;
+    align-items: center;
   }
   
   .header-bar-logo .logo-outline {
-    border: 4px solid white;
-    padding: 0.5rem 1rem;
- 
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
   }
   
   .header-bar-logo .logo-outline a {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
-    color: white;
+    color: #000000;
     text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+  }
+  
+  .header-bar-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
   }
   
   .header-bar-nav {
@@ -37,43 +66,83 @@
   }
   
   .header-bar-nav li a {
-    color: white;
+    color: #495057;
     text-decoration: none;
     font-size: 1rem;
     font-weight: 500;
     transition: color 0.3s ease;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
   }
   
   .header-bar-nav li a:hover {
-    color: #e74c3c;
+    color: #b330ff;
   }
   
   .header-bar-right {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
+  }
+  
+  .add-photos-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
   
   #add-post-button {
-    background-color: white;
-    color: red;
+    background-color: #b330ff;
+    color: white;
     border: none;
-    font-weight: 500;
-    padding: 0.45rem 1rem;
-    border-radius: 6px;
-    font-size: 1rem;
+    font-weight: bold;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 1.5rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.3);
   }
   
   #add-post-button:hover {
-    background-color: #ffada3;
+    background-color: #b330ff;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.4);
+  }
+  
+  .add-photos-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000000;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+  }
+  
+  .plus-sign {
+    font-size: 2rem;
+    font-weight: 300;
+    line-height: 1;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
   }
   
   .header-bar-username {
     font-size: 1rem;
     font-weight: 500;
-    color: white;
+    color: #495057;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
   }
   
   #user-icon-button {
@@ -84,13 +153,13 @@
   }
   
   .white-profile-icon {
-    filter: brightness(0) invert(1); 
+    filter: brightness(0) invert(0); 
     width: 30px;
     height: 30px;
   }
   
   #logout-button {
-    background-color: #FF1616;
+    background-color: #b330ff;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -101,8 +170,11 @@
     position: absolute;
     top: 60px;
     right: 20px;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
   }
   
   #logout-button:hover {
-    background-color: #c0392b;
+    background-color: #8a2be2;
   }

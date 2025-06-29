@@ -52,8 +52,8 @@ function Login() {
 
     return (
         <div id="login-container">
-            <h1 className="boxhub-title">🥊 BoxHub</h1>
-            <h2 className="auth-subtitle">Enter the Ring</h2>
+            <h1 className="boxhub-title">HotShot AI</h1>
+            <h2 className="auth-subtitle">Welcome Back!</h2>
             
             <div className="form-group">
                 <input 
@@ -82,7 +82,7 @@ function Login() {
                 className="auth-button"
                 onClick={handleButtonClick}
             >
-                Enter the Ring
+                Login
             </button>
 
             <div className="auth-footer">

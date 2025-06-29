@@ -1,23 +1,24 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #fff;
+  font-family: 'Satoshi', sans-serif;
+  background-color: white;
   margin: 0;
   padding: 0;
 }
 
 #post-title-and-content-section {
-  background-color: #fff;
+  background-color: white;
   padding: 20px;
   margin: 20px 20px 20px 200px; /* Top, Right, Bottom, Left */
   max-width: 800px;
   border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 #post-title-div {
   font-size: 28px;
   font-weight: bold;
   margin-bottom: 10px;
-  color: #333;
+  color: #495057;
 }
 
 #post-content-div {
@@ -27,6 +28,7 @@ body {
   padding: 0; /* Removes padding to allow text to start on the left */
   line-height: 1.6; /* Improves readability */
   white-space: pre-wrap; /* Preserves spaces and line breaks */
+  color: #495057;
 }
 
 #post-content-div p {
@@ -34,46 +36,55 @@ body {
   text-indent: 20px; /* Indents the first line of each paragraph */
 }
 
-
-
 #post-new-comment-box {
   width: calc(100% - 20px);
   padding: 10px;
   margin: 20px 0;
-  border: 1px solid #ccc;
+  border: 2px solid #e9ecef;
   border-radius: 5px;
   font-size: 16px;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  background: white;
+  color: #495057;
+}
+
+#post-new-comment-box:focus {
+  outline: none;
+  border-color: #b330ff;
+  box-shadow: 0 0 0 3px rgba(179, 48, 255, 0.1);
 }
 
 #submit-comment-button {
   padding: 10px 20px;
-  background-color: rgb(175, 36, 36);
-  color: #fff;
+  background-color: #b330ff;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  font-family: 'Satoshi', sans-serif;
+  transition: background-color 0.3s ease;
 }
 
 #submit-comment-button:hover {
-  background-color: #0056b3;
+  background-color: #8a2be2;
 }
 
 .comments-section {
-  background-color: #fff;
+  background-color: white;
   padding: 20px;
   margin: 20px auto;
   max-width: 800px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  border: 1px solid #e9ecef;
 }
 
 .comment {
   padding: 10px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .comment:last-child {
@@ -83,29 +94,30 @@ body {
 .comment-author {
   font-weight: bold;
   margin-bottom: 5px;
+  color: #495057;
 }
 
 .comment-text {
   font-size: 16px;
-  color: #333;
+  color: #495057;
 }
 
-  
 #post-title-div {
   font-size: 2rem; /* Larger font size for the title */
   font-weight: bold; /* Bold font weight */
-  color: #0a0a0a; /* Dark grey text color */
+  color: #495057; /* Dark grey text color */
   margin-bottom: 10px;
 }
 
 #post-content-div {
   font-size: 1.2rem; /* Medium font size for the content */
-  color: #000000; /* Lighter grey text color */
+  color: #495057; /* Lighter grey text color */
   margin-top: 10px;
 }
+
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #000;
+  border-left-color: #b330ff;
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -120,13 +132,13 @@ body {
 
 /* Add this CSS for the highlight effect */
 .highlight {
-  background-color: lightblue;
+  background-color: rgba(179, 48, 255, 0.2);
   animation: fadeHighlight 2s forwards;
 }
 
 @keyframes fadeHighlight {
   0% {
-    background-color: lightblue;
+    background-color: rgba(179, 48, 255, 0.2);
   }
   100% {
     background-color: transparent;
@@ -134,11 +146,12 @@ body {
 }
 
 #comments-section-title {
-  background-color: #fff;
+  background-color: white;
   padding: 20px;
   margin: 20px auto;
   max-width: 800px;
   border-radius: 8px;
+  color: #495057;
 }
 
 #article-image {
