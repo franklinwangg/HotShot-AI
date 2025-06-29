@@ -1,25 +1,44 @@
+<<<<<<< Updated upstream
 import React, { useState, useEffect } from 'react';
+=======
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+>>>>>>> Stashed changes
 import "./AddImages.css";
 
 import { Link } from 'react-router-dom';
 
 
 function AddImages() {
-
+    const navigate = useNavigate();
     const [title, setTitle] = useState("");
     const [content, setcontent] = useState("");
     const [images, setImages] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState({});
+    const [uploadComplete, setUploadComplete] = useState(false);
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
+<<<<<<< Updated upstream
+=======
+    const { username, setUsername } = useContext(UserContext); 
+>>>>>>> Stashed changes
 
     useEffect(() => {
-        // This will run every time `images` is updated
         if (images.length > 0) {
             console.log("final images : ", images);
         }
     }, [images]);
+
+    useEffect(() => {
+        if (uploadComplete) {
+            const timer = setTimeout(() => {
+                navigate('/');
+            }, 3000);
+            
+            return () => clearTimeout(timer);
+        }
+    }, [uploadComplete, navigate]);
 
     const handleImageChange = (e) => {
         const selectedFiles = Array.from(e.target.files);
@@ -40,7 +59,6 @@ function AddImages() {
         setUploadProgress({});
 
         try {
-            // Upload each image individually
             const uploadPromises = images.map(async (image, index) => {
                 const formData = new FormData();
                 formData.append("image", image);
@@ -64,9 +82,7 @@ function AddImages() {
             await Promise.all(uploadPromises);
             console.log("All images uploaded successfully");
             
-            // Clear the form after successful upload
-            setImages([]);
-            setUploadProgress({});
+            setUploadComplete(true);
             
         } catch (error) {
             console.error("Error uploading images:", error);
@@ -74,6 +90,10 @@ function AddImages() {
         } finally {
             setUploading(false);
         }
+    };
+
+    const handleBackToHomepage = () => {
+        navigate('/');
     };
 
     const changeTitle = (event) => {
@@ -85,8 +105,28 @@ function AddImages() {
 
     function adjustHeight(event) {
         const textarea = event.target;
-        textarea.style.height = 'auto'; // Reset height
-        textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scrollHeight
+        textarea.style.height = 'auto'; 
+        textarea.style.height = `${textarea.scrollHeight}px`; // 
+    }
+
+
+    if (uploadComplete) {
+        return (
+            <div className="container">
+                <div className="upload-success">
+                    <div className="success-icon">✓</div>
+                    <h2>Upload Successful!</h2>
+                    <p>Your {images.length} image{images.length !== 1 ? 's' : ''} have been uploaded to your collection.</p>
+                    <p className="redirect-message">Redirecting to homepage in 3 seconds...</p>
+                    <button
+                        className="btn-primary"
+                        onClick={handleBackToHomepage}
+                    >
+                        Back to Homepage Now
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -113,7 +153,7 @@ function AddImages() {
                 </label>
             </div>
 
-            {/* Display selected images */}
+
             {images.length > 0 && (
                 <div className="selected-images">
                     <h3>Selected Images ({images.length})</h3>

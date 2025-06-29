@@ -52,17 +52,19 @@ async function handler(req, res) {
     const pythonPath = path.join(venvPath, process.platform === 'win32' ? 'Scripts' : 'bin', process.platform === 'win32' ? 'python.exe' : 'python3');
 
     // 2.3) sharpess, lighting, and predict image scores
-    let sharpnessScore, lightingScore, predictedImage, imageConfidenceCategory, queryString = "";
+    let sharpnessScore, lightingScore, predictedImage, imageConfidenceCategory;
 
     try {
+      // The imageUrl should now be clean since we sanitize filenames during upload
       const [sharpnessOut, lightingOut, predictOut] = await Promise.all([
         execPythonScript(pythonPath, sharpnessScriptPath, imageUrl),
         execPythonScript(pythonPath, lightingScriptPath, imageUrl),
         execPythonScript(pythonPath, predictImageScriptPath, imageUrl)
       ]);
 
-      sharpnessScore = parseFloat(sharpnessOut);
-      lightingScore = parseFloat(lightingOut);
+      // Parse scores and ensure they're between 0-100
+      sharpnessScore = Math.min(100, Math.max(0, parseFloat(sharpnessOut)));
+      lightingScore = Math.min(100, Math.max(0, parseFloat(lightingOut)));
 
       // parse prediction output as before
       const lines = predictOut.trim().split(/\r?\n/);
@@ -80,123 +82,42 @@ async function handler(req, res) {
       else if (score >= 50) imageConfidenceCategory = 'Medium confidence';
       else imageConfidenceCategory = 'Low confidence';
 
-      // now safely use imageConfidenceCategory, predictedImage, sharpnessScore, etc.
       console.log("imageConfidenceCategory:", imageConfidenceCategory);
-      // (rest of your query building and OpenAI code here...)
 
     } catch (err) {
       console.error("Error running Python scripts:", err);
       return res.status(500).json({ error: "Failed to analyze image" });
     }
 
-
-    console.log("imageConfidenceCategory : ", imageConfidenceCategory);
-
-    if (imageConfidenceCategory === 'High confidence') {
-      queryString += `I have an image of a ${predictedImage}.`
-      sharpnessNeedsImprovement = false;
-      lightingNeedsImprovement = false;
-
-      if (sharpnessScore < 0.5 || lightingScore < 0.5) {
-        if (sharpnessScore < 0.5) {
-          sharpnessNeedsImprovement = true;
-          queryString += `The sharpness score is quite low at ${sharpnessScore} on BRISQUE.`
-        }
-        if (lightingScore < 0.5) {
-          lightingNeedsImprovement = true;
-          queryString = `The lighting score is quite low (${lightingScore}) on OpenCV. `;
-        }
-        queryString += `What are some tips for improving the `;
-
-        if (sharpnessNeedsImprovement && !lightingNeedsImprovement) {
-          queryString += `sharpness of a ${predictedImage}?`;
-        }
-        if (!sharpnessNeedsImprovement && lightingNeedsImprovement) {
-          queryString += `lighting of a ${predictedImage}?`;
-        }
-        if (sharpnessNeedsImprovement && lightingNeedsImprovement) {
-          queryString += `sharpness and lighting of a photo of a ${predictedImage}?`;
-        }
+    // Calculate overall score (50% sharpness + 50% lighting)
+    const overallScore = Math.round((sharpnessScore + lightingScore) / 2);
+    
+    // Generate concise feedback based on scores
+    let feedback = "";
+    
+    if (sharpnessScore >= 70 && lightingScore >= 70) {
+      feedback = "Excellent photo! Great sharpness and lighting.";
+    } else if (sharpnessScore >= 50 && lightingScore >= 50) {
+      feedback = "Good photo with decent sharpness and lighting.";
+    } else {
+      feedback = "Photo needs improvement: ";
+      if (sharpnessScore < 50) {
+        feedback += "Increase sharpness by using a tripod or faster shutter speed. ";
       }
-      if (sharpnessScore >= 0.5 && lightingScore >= 0.5) {
-        queryString += `Both the sharpness and lighting on the ${predictedImage} are good. Give this picture a short compliment!`;
-      }
-    }
-    if (imageConfidenceCategory === 'Medium confidence') {
-      queryString += `This might be an image of a ${predictedImage}, but I'm not fully confident so use softer language in your response.`
-      sharpnessNeedsImprovement = false;
-      lightingNeedsImprovement = false;
-
-      if (sharpnessScore < 0.5 || lightingScore < 0.5) {
-        if (sharpnessScore < 0.5) {
-          sharpnessNeedsImprovement = true;
-          queryString += `The sharpness score is quite low at ${sharpnessScore} on BRISQUE.`
-        }
-        if (lightingScore < 0.5) {
-          lightingNeedsImprovement = true;
-          queryString = `The lighting score is quite low (${lightingScore}) on OpenCV. `;
-        }
-        queryString += `What are some tips for improving the `;
-
-        if (sharpnessNeedsImprovement && !lightingNeedsImprovement) {
-          queryString += `sharpness of a ${predictedImage}?`;
-        }
-        if (!sharpnessNeedsImprovement && lightingNeedsImprovement) {
-          queryString += `lighting of a ${predictedImage}?`;
-        }
-        if (sharpnessNeedsImprovement && lightingNeedsImprovement) {
-          queryString += `sharpness and lighting of a photo of a ${predictedImage}?`;
-        }
-      }
-      if (sharpnessScore >= 0.5 && lightingScore >= 0.5) {
-        queryString += `Both the sharpness and lighting on the ${predictedImage} are good. Give this picture a short compliment!`;
-      }
-    }
-    else {
-      sharpnessNeedsImprovement = false;
-      lightingNeedsImprovement = false;
-
-      if (sharpnessScore < 0.5 || lightingScore < 0.5) {
-        if (sharpnessScore < 0.5) {
-          sharpnessNeedsImprovement = true;
-          queryString += `The sharpness score is quite low at ${sharpnessScore} on BRISQUE.`
-        }
-        if (lightingScore < 0.5) {
-          lightingNeedsImprovement = true;
-          queryString = `The lighting score is quite low (${lightingScore}) on OpenCV. `;
-        }
-        queryString += `What are some general tips for improving the `;
-
-        if (sharpnessNeedsImprovement && !lightingNeedsImprovement) {
-          queryString += `sharpness of a picture?`;
-        }
-        if (!sharpnessNeedsImprovement && lightingNeedsImprovement) {
-          queryString += `lighting of a picture?`;
-        }
-        if (sharpnessNeedsImprovement && lightingNeedsImprovement) {
-          queryString += `sharpness and lighting of a picture?`;
-        }
-      }
-      if (sharpnessScore >= 0.5 && lightingScore >= 0.5) {
-        queryString += `Both the sharpness and lighting on this picture are good. Give this picture a short compliment!`;
+      if (lightingScore < 50) {
+        feedback += "Improve lighting by finding better light sources or adjusting exposure. ";
       }
     }
 
-    console.log("query string : ", queryString);
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY // store your key in env vars for safety
+    // Return the analysis results with all scores as percentages (0-100)
+    res.status(200).json({
+      score: overallScore, // Already a percentage (0-100)
+      feedback: feedback,
+      sharpnessScore: Math.round(sharpnessScore), // Ensure it's a percentage
+      lightingScore: Math.round(lightingScore), // Ensure it's a percentage
+      predictedImage: predictedImage,
+      confidence: imageConfidenceCategory
     });
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "user", content: queryString }
-      ],
-      temperature: 0.7
-    });
-
-    console.log("ChatGPT response:", response.choices[0].message.content);
-
 
   }
 };

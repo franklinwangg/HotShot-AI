@@ -8,7 +8,7 @@ function Login() {
 
     const [enteredUsername, setEnteredUsername] = useState("");
     const [enteredPassword, setEnteredPassword] = useState("");
-    const { username, setUsername } = useContext(UserContext); // Access username and setUsername from context
+    const { username, setUsername } = useContext(UserContext); 
 
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
@@ -17,9 +17,6 @@ function Login() {
     const handleButtonClick = async () => {
 
         try {
-            // fetch(`${apiEndpointUrl}/api/users?action=login`)
-
-            // const response = await fetch("https://vercel-backend-deployment-test-d24q.vercel.app/api/users?action=login", {
             const response = await fetch(`${apiEndpointUrl}/api/users?action=login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
