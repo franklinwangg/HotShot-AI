@@ -11,6 +11,7 @@ function AddImages() {
     const [uploadProgress, setUploadProgress] = useState({});
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
+    const { username, setUsername } = useContext(UserContext); // Access username and setUsername from context
 
     useEffect(() => {
         // This will run every time `images` is updated
@@ -42,6 +43,7 @@ function AddImages() {
             const uploadPromises = images.map(async (image, index) => {
                 const formData = new FormData();
                 formData.append("image", image);
+                formData.append("username", username);
 
                 setUploadProgress(prev => ({ ...prev, [index]: 'uploading' }));
 
