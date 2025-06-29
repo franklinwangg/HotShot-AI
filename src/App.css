@@ -1,5 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Satoshi:wght@300;400;500;600;700&display=swap');
+
 .App {
   text-align: center;
+  font-family: 'Satoshi', sans-serif;
+  background-color: white;
+  min-height: 100vh;
 }
 
 .App-logo {
@@ -14,18 +19,19 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: white;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: #495057;
+  font-family: 'Satoshi', sans-serif;
 }
 
 .App-link {
-  color: #61dafb;
+  color: #b330ff;
 }
 
 @keyframes App-logo-spin {

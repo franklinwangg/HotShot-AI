@@ -4,54 +4,75 @@ import UserContext from '../../../context/UserContext';
 
 function AddImages() {
 
-    const [image, setImage] = useState(null);
-    const { username, setUsername } = useContext(UserContext); // Access username and setUsername from context
-
+    const [title, setTitle] = useState("");
+    const [content, setcontent] = useState("");
+    const [images, setImages] = useState([]);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState({});
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
 
     useEffect(() => {
-        // This will run every time `image` is updated
-        if (image) {
-            console.log("final image : ", image);
+        // This will run every time `images` is updated
+        if (images.length > 0) {
+            console.log("final images : ", images);
         }
-    }, [image]);
+    }, [images]);
 
     const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
+        const selectedFiles = Array.from(e.target.files);
+        setImages(selectedFiles);
+    };
+
+    const removeImage = (index) => {
+        setImages(images.filter((_, i) => i !== index));
     };
 
     const handleAddImagesButtonClick = async () => {
-        if (!image) {
-            console.log("No image selected");
+        if (images.length === 0) {
+            console.log("No images selected");
             return;
         }
 
-        const formData = new FormData();
-        formData.append("image", image);
-        formData.append("username", username); 
-
-        // If you still want to send a postId or something else, append it here
-        // formData.append("postId", somePostId);
-        console.log("formData : ", formData);
+        setUploading(true);
+        setUploadProgress({});
 
         try {
-            const response = await fetch(`${apiEndpointUrl}/api/pictures`, {
-                method: "POST",
-                body: formData, // no Content-Type header! Let browser set it (multipart/form-data)
+            // Upload each image individually
+            const uploadPromises = images.map(async (image, index) => {
+                const formData = new FormData();
+                formData.append("image", image);
+
+                setUploadProgress(prev => ({ ...prev, [index]: 'uploading' }));
+
+                const response = await fetch(`${apiEndpointUrl}/api/pictures`, {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Upload failed for ${image.name}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                setUploadProgress(prev => ({ ...prev, [index]: 'success' }));
+                return data;
             });
 
-            if (!response.ok) {
-                throw new Error(`Upload failed: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log("Upload success:", data);
+            await Promise.all(uploadPromises);
+            console.log("All images uploaded successfully");
+            
+            // Clear the form after successful upload
+            setImages([]);
+            setUploadProgress({});
+            
         } catch (error) {
-            console.error("Error uploading image:", error);
+            console.error("Error uploading images:", error);
+            setUploadProgress(prev => ({ ...prev, [Object.keys(prev).find(key => prev[key] === 'uploading')]: 'error' }));
+        } finally {
+            setUploading(false);
         }
     };
-
 
     const changeTitle = (event) => {
         setTitle(event.target.value);
@@ -66,8 +87,6 @@ function AddImages() {
         textarea.style.height = `${textarea.scrollHeight}px`; // Set height to scrollHeight
     }
 
-
-
     return (
         <div className="container">
             <h1 className="page-title">Add Images</h1>
@@ -78,22 +97,65 @@ function AddImages() {
                         type="file"
                         id="image-input"
                         accept="image/*"
+                        multiple
                         onChange={handleImageChange}
                         required
                     />
                     <span className="upload-label">
-                        {image ? image.name : "Choose an image..."}
+                        {images.length > 0 
+                            ? `${images.length} image${images.length > 1 ? 's' : ''} selected`
+                            : "Choose images..."
+                        }
                     </span>
                     <span className="browse-button">Browse</span>
                 </label>
             </div>
 
+            {/* Display selected images */}
+            {images.length > 0 && (
+                <div className="selected-images">
+                    <h3>Selected Images ({images.length})</h3>
+                    <div className="image-grid">
+                        {images.map((image, index) => (
+                            <div key={index} className="image-item">
+                                <img 
+                                    src={URL.createObjectURL(image)} 
+                                    alt={image.name}
+                                    className="preview-image"
+                                />
+                                <div className="image-info">
+                                    <span className="image-name">{image.name}</span>
+                                    <span className="image-size">
+                                        {(image.size / 1024 / 1024).toFixed(2)} MB
+                                    </span>
+                                    {uploadProgress[index] && (
+                                        <span className={`upload-status ${uploadProgress[index]}`}>
+                                            {uploadProgress[index] === 'uploading' && 'Uploading...'}
+                                            {uploadProgress[index] === 'success' && '✓ Uploaded'}
+                                            {uploadProgress[index] === 'error' && '✗ Error'}
+                                        </span>
+                                    )}
+                                </div>
+                                <button 
+                                    className="remove-image-btn"
+                                    onClick={() => removeImage(index)}
+                                    disabled={uploading}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             <button
                 id="create-new-post-submit-button"
                 className="btn-primary"
                 onClick={handleAddImagesButtonClick}
+                disabled={images.length === 0 || uploading}
             >
-                Add Image To Collection
+                {uploading ? 'Uploading Images...' : `Add ${images.length} Image${images.length !== 1 ? 's' : ''} To Collection`}
             </button>
         </div>
     );

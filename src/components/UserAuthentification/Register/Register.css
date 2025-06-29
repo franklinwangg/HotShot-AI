@@ -2,10 +2,11 @@
     max-width: 400px;
     margin: 2rem auto;
     padding: 2.5rem;
-    background: #fff;
+    background: #f8f9fa;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     text-align: center;
+    border: 1px solid #e9ecef;
 }
 /*rgba(231, 76, 60, 0.3);*/
 
@@ -13,17 +14,19 @@
 
 .boxhub-title {
     font-size: 2.5rem;
-    color: #FF1616;
+    color: #b330ff;
     margin-bottom: 0.5rem;
-    font-family: 'Arial Black', sans-serif;
+    font-family: 'Satoshi', sans-serif;
     text-transform: uppercase;
     letter-spacing: 2px;
+    font-weight: 700;
 }
 
 .auth-subtitle {
-    color: #2c3e50;
+    color: #495057;
     margin-bottom: 2rem;
     font-size: 1.2rem;
+    font-weight: 500;
 }
 
 .auth-form {
@@ -34,16 +37,18 @@
     width: 100%;
     padding: 12px 20px;
     margin-bottom: 1.5rem;
-    border: 2px solid #ecf0f1;
+    border: 2px solid #e9ecef;
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
+    background: white;
+    color: #495057;
 }
 
 .auth-input:focus {
     outline: none;
-    border-color: #FF1616;
-    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    border-color: #b330ff;
+    box-shadow: 0 0 0 3px rgba(179, 48, 255, 0.1);
 }
 
 /*border;*/
@@ -51,7 +56,7 @@
 .auth-button {
     width: 100%;
     padding: 14px;
-    background: #FF1616;
+    background: #b330ff;
     color: white;
     border: none;
     border-radius: 8px;
@@ -61,32 +66,33 @@
     letter-spacing: 1px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-family: 'Satoshi', sans-serif;
 }
 
 .auth-button:hover {
-    background: #c0392b;
+    background: #8a2be2;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+    box-shadow: 0 4px 12px rgba(179, 48, 255, 0.3);
 }
 
 .auth-footer {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #ecf0f1;
+    border-top: 1px solid #e9ecef;
 }
 
 .auth-link-text {
-    color: #7f8c8d;
+    color: #6c757d;
     margin: 0;
 }
 
 .auth-link {
-    color: #FF1616;
+    color: #b330ff;
     font-weight: 600;
     text-decoration: none;
     transition: color 0.2s ease;
 }
 
 .auth-link:hover {
-    color: #c0392b;
+    color: #8a2be2;
 }

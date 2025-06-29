@@ -1,16 +1,63 @@
 /* Homepage.css */
+@import url('https://fonts.googleapis.com/css2?family=Satoshi:wght@300;400;500;600;700&display=swap');
 
 body {
-    background-color: #f5f5f5;
-    /* Matches the site's overall theme */
-    font-family: 'Arial', sans-serif;
+    background-color: white;
+    font-family: 'Satoshi', sans-serif;
     margin: 0;
     padding: 0;
+    color: #495057;
 }
 
-  
+.chatgpt-powered-box {
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    margin: 1rem auto 1rem auto;
+    max-width: 200px;
+    border: 1px solid #e9ecef;
+    font-family: 'Satoshi', sans-serif;
+}
+
+.chatgpt-powered-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.chatgpt-powered-text strong {
+    font-weight: 700;
+    color: #495057;
+}
+
+.header-section {
+    text-align: center;
+    padding: 3rem 2rem 2rem 2rem;
+    background: linear-gradient(135deg, #b330ff 0%, #8a2be2 100%);
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.hotshot-logo {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.02em;
+}
+
+.project-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
 #go-to-create-new-post-page-button {
-    background-color: #0a0a0a;
+    background-color: #b330ff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -21,24 +68,26 @@ body {
     margin: 20px;
     display: block;
     width: fit-content;
+    font-family: 'Satoshi', sans-serif;
 }
 
 #go-to-create-new-post-page-button:hover {
-    background-color: #252626;
+    background-color: #8a2be2;
 }
 
 #recent-boxing-news {
     font-size: 30px;
     font-weight: bold;
-    color: black;
+    color: #495057;
     margin: 20px;
     text-align: center;
+    font-family: 'Satoshi', sans-serif;
 }
 
 .red-line {
     width: 75rem; 
     height: 3px; 
-    background-color: #FF1616; 
+    background-color: #b330ff; 
     margin: 2rem auto 2rem; 
     border-radius: 2px; 
 }
@@ -85,8 +134,9 @@ body {
 #upper-logo-bar>div {
     top: 10px;
     margin: 0px;
-    color: white;
+    color: #495057;
     font-size: 10px;
+    font-family: 'Satoshi', sans-serif;
 }
 
 #person-icon {
@@ -118,7 +168,7 @@ body {
 #first-three-posts {
     display: flex;
     width: 100%;
-    color: #0a0a0a;
+    color: white;
 }
 
 #first-three-posts>div {
@@ -168,11 +218,12 @@ body {
 .first-post-title {
     display: block; /* Ensure it takes full width below the image */
     margin-top: 10px; /* Add some spacing from the image */
-    color: #000; /* Change color as needed */
+    color: white; /* Change color as needed */
+    font-family: 'Satoshi', sans-serif;
 }
 
 .first-post-title:hover {
-    color: #e7e0e0; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 
 #first-post-image {
@@ -187,11 +238,11 @@ body {
 }
 
 #second-post a:hover {
-    color: #a12424; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 
 #third-post a:hover {
-    color: #a12424; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 
 #first-six-posts-image-and-title-wrapper {
@@ -257,7 +308,7 @@ body {
     overflow: hidden; /* Hides the part of the image that exceeds the container */
 }
 #sixth-post a:hover {
-    color: #a12424; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 
 #fourth-post,
@@ -271,11 +322,11 @@ body {
 }
 
 #fourth-post a:hover {
-    color: #a12424; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 
 #fifth-post a:hover {
-    color: #a12424; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 
 
@@ -299,23 +350,23 @@ body {
 
 /* Color for each box */
 #box1 {
-    background-color: rgb(255, 0, 0); /* First box color */
+    background-color: #b330ff; /* First box color */
     display: flex;
     justify-content: center; /* Center content inside the box */
     align-items: center;
     width: 100%; /* Ensure it takes full width */
     height: 300px; /* Define a height for the box */
-    border: 1px solid #ddd; /* Optional: border for visibility */
+    border: 1px solid #e9ecef; /* Optional: border for visibility */
 }
 
 #box2 {
-    background-color: rgb(200, 62, 62); /* Second box color */
+    background-color: #8a2be2; /* Second box color */
     display: flex;
     justify-content: center; /* Center content inside the box */
     align-items: center;
     width: 100%; /* Ensure it takes full width */
     height: 300px; /* Define a height for the box */
-    border: 1px solid #ddd; /* Optional: border for visibility */
+    border: 1px solid #e9ecef; /* Optional: border for visibility */
 }
 
 
@@ -356,7 +407,7 @@ body {
 }
 
 #seventh-post a:hover {
-    color: #a12424; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 
 
@@ -405,7 +456,7 @@ body {
 }
 
 #eighth-post a:hover {
-    color: #a12424; /* Change color on hover */
+    color: #b330ff; /* Change color on hover */
 }
 #remaining-post-posts {
     display: flex;
@@ -465,7 +516,7 @@ body {
 #rest-of-posts-title {
     font-size: 1.5rem; /* Keep title smaller */
     margin-bottom: 20px;
-    color: #333; /* Optional: Adjust color */
+    color: #495057; /* Optional: Adjust color */
 }
 
 #rest-of-posts-posts {
@@ -489,13 +540,11 @@ body {
 
 #remaining-post-link {
     font-size: 1rem; /* Smaller link text */
-    color: #000000;
+    color: #495057;
     font-weight: bold;
-
     text-decoration: none;
 }
 
 #remaining-post-link:hover {
-    color: #a12424; /* Change color on hover */
-    
+    color: #b330ff; /* Change color on hover */
 }

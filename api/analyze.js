@@ -49,7 +49,7 @@ async function handler(req, res) {
 
     const projectRoot = path.resolve(__dirname, '..');  // adjust '..' if your script is inside a subfolder
     const venvPath = path.join(projectRoot, 'venv');
-    const pythonPath = path.join(venvPath, 'Scripts', 'python.exe');
+    const pythonPath = path.join(venvPath, process.platform === 'win32' ? 'Scripts' : 'bin', process.platform === 'win32' ? 'python.exe' : 'python3');
 
     // 2.3) sharpess, lighting, and predict image scores
     let sharpnessScore, lightingScore, predictedImage, imageConfidenceCategory, queryString = "";
