@@ -18,8 +18,11 @@ function Homepage() {
     useEffect(() => {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         fetch(`${apiEndpointUrl}/api/pictures`)
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         const userId = username;

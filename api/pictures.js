@@ -70,10 +70,13 @@ async function handler(req, res) {
       const stream = fs.createReadStream(file.filepath);
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       const key = `${Date.now()}-${file.originalFilename}`;
 
       console.log("4");
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
       
@@ -85,6 +88,9 @@ async function handler(req, res) {
       
       const key = `${username}/${Date.now()}-${sanitizedFilename}`;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes

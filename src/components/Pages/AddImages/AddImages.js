@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react';
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -24,6 +27,10 @@ function AddImages() {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+    const { username, setUsername } = useContext(UserContext); 
+>>>>>>> Stashed changes
 =======
     const { username, setUsername } = useContext(UserContext); 
 >>>>>>> Stashed changes
