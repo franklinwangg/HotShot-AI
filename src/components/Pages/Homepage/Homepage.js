@@ -8,15 +8,16 @@ import HeaderBar from '../../Others/HeaderBar/HeaderBar';
 function Homepage() {
     const navigate = useNavigate();
     const [pictures, setpictures] = useState([]);
-    const [ranking, setRanking] = useState([]); //
+    const [ranking, setRanking] = useState([]); // [{url, score, feedback}]
     const [loading, setLoading] = useState(false);
     const [ranked, setRanked] = useState(false);
+    const [expandedPhotos, setExpandedPhotos] = useState(new Set()); // Track which photos show feedback
     const { username, setUsername } = useContext(UserContext);
     const [showLogoutButton, setShowLogoutButton] = useState(false);
     const apiEndpointUrl = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
-        const userId = username;
+        const userId = username; // however you get your user ID
 
         fetch(`${apiEndpointUrl}/api/pictures?userId=${userId}`)
             .then((response) => response.json())
@@ -29,6 +30,7 @@ function Homepage() {
         setLoading(true);
         setRanked(false);
         try {
+            // Run analysis for all photos in parallel
             const results = await Promise.all(
                 pictures.map(async (picture) => {
                     const res = await fetch(`${apiEndpointUrl}/api/analyze`, {
@@ -48,7 +50,7 @@ function Homepage() {
                     };
                 })
             );
-            // scoree sorting
+            // Sort by score descending
             results.sort((a, b) => b.score - a.score);
             setRanking(results);
             setRanked(true);
@@ -56,6 +58,18 @@ function Homepage() {
             alert("Error ranking photos. Please try again.");
         }
         setLoading(false);
+    };
+
+    const toggleFeedback = (index) => {
+        setExpandedPhotos(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(index)) {
+                newSet.delete(index);
+            } else {
+                newSet.add(index);
+            }
+            return newSet;
+        });
     };
 
     const openLogoutButton = () => {
@@ -74,6 +88,7 @@ function Homepage() {
                 </div>
             </div>
 
+        {/* if user is logged in */}
             {username != null && (
                 <div id="rest-of-pictures">
                     <div style={{ display: 'flex', justifyContent: 'center', margin: '1rem 0' }}>
@@ -105,8 +120,12 @@ function Homepage() {
                     <div id="rest-of-pictures-pictures">
                         {ranked && ranking.length > 0 ? (
                             <div className="photos-grid ranked-photos">
-                                {ranking.map((item, index) => (
-                                    <div className="photo-card ranked" key={index}>
+                                {ranking.slice(0, 3).map((item, index) => (
+                                    <div 
+                                        className={`photo-card ranked rank-${index + 1}`} 
+                                        key={index}
+                                        onClick={() => toggleFeedback(index)}
+                                    >
                                         <div className="photo-image-container">
                                             <img 
                                                 className="photo-image" 
@@ -114,20 +133,15 @@ function Homepage() {
                                                 alt={`Ranked photo ${index + 1}`} 
                                             />
                                             <div className="rank-badge">#{index + 1}</div>
+                                            <div className="click-hint">Click for feedback</div>
                                         </div>
-                                        <div className="photo-details">
-                                            <div className="score-header">
-                                                <span className="overall-score">{item.score}%</span>
-                                                <span className="rank-number">Rank #{index + 1}</span>
+                                        {expandedPhotos.has(index) && (
+                                            <div className="photo-feedback">
+                                                <div className="feedback-text">
+                                                    {item.feedback}
+                                                </div>
                                             </div>
-                                            <div className="sub-scores">
-                                                <span>Sharpness: {item.sharpnessScore}%</span>
-                                                <span>Lighting: {item.lightingScore}%</span>
-                                            </div>
-                                            <div className="feedback-text">
-                                                {item.feedback}
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
