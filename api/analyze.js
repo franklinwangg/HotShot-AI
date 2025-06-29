@@ -3,6 +3,8 @@ const { IncomingForm } = require("formidable");
 const { execFile } = require("child_process");
 const fs = require("fs");
 const path = require('path');
+const OpenAI = require("openai");
+
 
 require("dotenv").config();
 
@@ -50,127 +52,163 @@ async function handler(req, res) {
     const pythonPath = path.join(venvPath, 'Scripts', 'python.exe');
 
     // 2.3) sharpess, lighting, and predict image scores
-    let sharpnessScore, lightingScore, predictedImageScore;
+    let sharpnessScore, lightingScore, predictedImage, imageConfidenceCategory, queryString = "";
 
-    // 3) send the image to sharpness
-    execFile(pythonPath, [sharpnessScriptPath, imageUrl], (error, stdout, stderr) => {
-      if (error) {
-        console.log("sharpness error : ", error);
-        return;
-      }
-      sharpnessScore = parseFloat(stdout);
-    });
+    try {
+      const [sharpnessOut, lightingOut, predictOut] = await Promise.all([
+        execPythonScript(pythonPath, sharpnessScriptPath, imageUrl),
+        execPythonScript(pythonPath, lightingScriptPath, imageUrl),
+        execPythonScript(pythonPath, predictImageScriptPath, imageUrl)
+      ]);
 
-    // 4) send the image to lighting
-    execFile(pythonPath, [lightingScriptPath, imageUrl], (error, stdout, stderr) => {
-      if (error) {
-        console.log("lighting script error : ", error);
-        return;
-      }
-      lightingScore = parseFloat(stdout);
-    });
+      sharpnessScore = parseFloat(sharpnessOut);
+      lightingScore = parseFloat(lightingOut);
 
-    // 5) send the image to predict-image
-//     execFile(pythonPath, [predictImageScriptPath, imageUrl], (error, stdout, stderr) => {
-//       if (error) {
-//         console.log("predict image error : ", error);
-//         return;
-//       }
-//       predictedImageScore = JSON.stringify(stdout);
-//     });
-//     // 1) parse them out
-//     // 2) if highest score is 
-// // > 80%	High confidence — prediction is very likely correct; safe to treat as definitive.
-// // 50% – 80%	Medium confidence — probably correct but consider showing alternatives or qualifiers like “likely” or “probably.”
-// // < 50%	Low confidence — prediction is uncertain; best to show top-N results or disclaim uncertainty.
-
-    execFile(pythonPath, [predictImageScriptPath, imageUrl], (error, stdout, stderr) => {
-      if (error) {
-        console.error("predict image error : ", error);
-        return;
-      }
-
-      // Raw output example:
-      // "runway: 31.11%\r\nheliport: 12.96%\r\nconstruction_site: 11.87%\r\ndam: 11.21%\r\nindustrial_area: 9.46%\r\n"
-      
-      // 1) Parse the stdout string into an array of {label, score}
-      const lines = stdout.trim().split(/\r?\n/);
+      // parse prediction output as before
+      const lines = predictOut.trim().split(/\r?\n/);
       const predictions = lines.map(line => {
         const [label, scoreStr] = line.split(':').map(s => s.trim());
         const score = parseFloat(scoreStr.replace('%', ''));
         return { label, score };
       });
 
-      // 2) Find highest score
       const topPrediction = predictions.reduce((max, cur) => (cur.score > max.score ? cur : max), predictions[0]);
-
-      // 3) Categorize confidence
       const score = topPrediction.score;
-      let confidenceCategory;
-      if (score > 80) {
-        confidenceCategory = 'High confidence';
-      } else if (score >= 50) {
-        confidenceCategory = 'Medium confidence';
-      } else {
-        confidenceCategory = 'Low confidence';
+      predictedImage = topPrediction.label;
+
+      if (score > 80) imageConfidenceCategory = 'High confidence';
+      else if (score >= 50) imageConfidenceCategory = 'Medium confidence';
+      else imageConfidenceCategory = 'Low confidence';
+
+      // now safely use imageConfidenceCategory, predictedImage, sharpnessScore, etc.
+      console.log("imageConfidenceCategory:", imageConfidenceCategory);
+      // (rest of your query building and OpenAI code here...)
+
+    } catch (err) {
+      console.error("Error running Python scripts:", err);
+      return res.status(500).json({ error: "Failed to analyze image" });
+    }
+
+
+    console.log("imageConfidenceCategory : ", imageConfidenceCategory);
+
+    if (imageConfidenceCategory === 'High confidence') {
+      queryString += `I have an image of a ${predictedImage}.`
+      sharpnessNeedsImprovement = false;
+      lightingNeedsImprovement = false;
+
+      if (sharpnessScore < 0.5 || lightingScore < 0.5) {
+        if (sharpnessScore < 0.5) {
+          sharpnessNeedsImprovement = true;
+          queryString += `The sharpness score is quite low at ${sharpnessScore} on BRISQUE.`
+        }
+        if (lightingScore < 0.5) {
+          lightingNeedsImprovement = true;
+          queryString = `The lighting score is quite low (${lightingScore}) on OpenCV. `;
+        }
+        queryString += `What are some tips for improving the `;
+
+        if (sharpnessNeedsImprovement && !lightingNeedsImprovement) {
+          queryString += `sharpness of a ${predictedImage}?`;
+        }
+        if (!sharpnessNeedsImprovement && lightingNeedsImprovement) {
+          queryString += `lighting of a ${predictedImage}?`;
+        }
+        if (sharpnessNeedsImprovement && lightingNeedsImprovement) {
+          queryString += `sharpness and lighting of a photo of a ${predictedImage}?`;
+        }
       }
-
-      // 4) Output decision info
-      console.log(`Top prediction: ${topPrediction.label} (${topPrediction.score}%)`);
-      console.log(`Confidence: ${confidenceCategory}`);
-
-      // Optionally handle low confidence, e.g., show top 3 predictions
-      if (confidenceCategory === 'Low confidence') {
-        console.log('Top 3 predictions (due to low confidence):');
-        predictions.slice(0, 3).forEach(p => {
-          console.log(`  - ${p.label}: ${p.score}%`);
-        });
+      if (sharpnessScore >= 0.5 && lightingScore >= 0.5) {
+        queryString += `Both the sharpness and lighting on the ${predictedImage} are good. Give this picture a short compliment!`;
       }
+    }
+    if (imageConfidenceCategory === 'Medium confidence') {
+      queryString += `This might be an image of a ${predictedImage}, but I'm not fully confident so use softer language in your response.`
+      sharpnessNeedsImprovement = false;
+      lightingNeedsImprovement = false;
 
-      // You can now send { lightingScore, sharpnessScore, predictedTopic } to ChatGPT or other downstream logic
+      if (sharpnessScore < 0.5 || lightingScore < 0.5) {
+        if (sharpnessScore < 0.5) {
+          sharpnessNeedsImprovement = true;
+          queryString += `The sharpness score is quite low at ${sharpnessScore} on BRISQUE.`
+        }
+        if (lightingScore < 0.5) {
+          lightingNeedsImprovement = true;
+          queryString = `The lighting score is quite low (${lightingScore}) on OpenCV. `;
+        }
+        queryString += `What are some tips for improving the `;
+
+        if (sharpnessNeedsImprovement && !lightingNeedsImprovement) {
+          queryString += `sharpness of a ${predictedImage}?`;
+        }
+        if (!sharpnessNeedsImprovement && lightingNeedsImprovement) {
+          queryString += `lighting of a ${predictedImage}?`;
+        }
+        if (sharpnessNeedsImprovement && lightingNeedsImprovement) {
+          queryString += `sharpness and lighting of a photo of a ${predictedImage}?`;
+        }
+      }
+      if (sharpnessScore >= 0.5 && lightingScore >= 0.5) {
+        queryString += `Both the sharpness and lighting on the ${predictedImage} are good. Give this picture a short compliment!`;
+      }
+    }
+    else {
+      sharpnessNeedsImprovement = false;
+      lightingNeedsImprovement = false;
+
+      if (sharpnessScore < 0.5 || lightingScore < 0.5) {
+        if (sharpnessScore < 0.5) {
+          sharpnessNeedsImprovement = true;
+          queryString += `The sharpness score is quite low at ${sharpnessScore} on BRISQUE.`
+        }
+        if (lightingScore < 0.5) {
+          lightingNeedsImprovement = true;
+          queryString = `The lighting score is quite low (${lightingScore}) on OpenCV. `;
+        }
+        queryString += `What are some general tips for improving the `;
+
+        if (sharpnessNeedsImprovement && !lightingNeedsImprovement) {
+          queryString += `sharpness of a picture?`;
+        }
+        if (!sharpnessNeedsImprovement && lightingNeedsImprovement) {
+          queryString += `lighting of a picture?`;
+        }
+        if (sharpnessNeedsImprovement && lightingNeedsImprovement) {
+          queryString += `sharpness and lighting of a picture?`;
+        }
+      }
+      if (sharpnessScore >= 0.5 && lightingScore >= 0.5) {
+        queryString += `Both the sharpness and lighting on this picture are good. Give this picture a short compliment!`;
+      }
+    }
+
+    console.log("query string : ", queryString);
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY // store your key in env vars for safety
     });
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "user", content: queryString }
+      ],
+      temperature: 0.7
+    });
+
+    console.log("ChatGPT response:", response.choices[0].message.content);
 
 
   }
 };
 
-// Login handler
-async function handleLogin(req, res) {
-  console.log("inside handleLogin now");
-
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ message: "Username and password are required" });
-  }
-
-  const client = new Client({
-    connectionString: process.env.SUPABASE_CONNECTION_STRING_2,
+const execPythonScript = (pythonPath, scriptPath, imageUrl) => {
+  return new Promise((resolve, reject) => {
+    execFile(pythonPath, [scriptPath, imageUrl], (error, stdout, stderr) => {
+      if (error) return reject(error);
+      resolve(stdout);
+    });
   });
+};
 
-  try {
-    await client.connect();
-
-    const result = await client.query("SELECT * FROM users WHERE username = $1", [
-      username,
-    ]);
-
-    if (result.rows.length === 0) {
-      return res.status(401).json({ message: "User not found" });
-    }
-
-    const isMatch = await bcrypt.compare(password, result.rows[0].password_hash);
-    if (isMatch) {
-      res.status(200).json({ success: true, message: "Login successful" });
-    } else {
-      res.status(401).json({ message: "Invalid credentials" });
-    }
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Server Error" });
-  } finally {
-    await client.end();
-  }
-}
 
 module.exports = handler;
